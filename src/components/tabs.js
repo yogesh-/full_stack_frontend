@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { FaEdit } from "react-icons/fa";
 import { AiFillDelete } from "react-icons/ai";
+import Modal from "./modal";
 
 class Tabs extends Component {
   constructor(props) {
@@ -12,6 +13,8 @@ class Tabs extends Component {
       city: "",
       country: "",
       apiResponse: "",
+      modal: false,
+      user: "",
     };
   }
 
@@ -22,24 +25,6 @@ class Tabs extends Component {
   onChange = (e) => {
     console.log(e.target.value);
     this.setState({ [e.target.name]: e.target.value });
-  };
-
-  deleteUser = (userId) => {
-    console.log(userId);
-    // e.preventDefault();
-    fetch("http://localhost:5000/delete/" + userId, {
-      method: "DELETE",
-      body: JSON.stringify({
-        id: userId,
-      }),
-      headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    })
-      .then((response) => response.json())
-      .then((json) => console.log(json));
-    console.log("deleted user is" + userId);
-    this.dataLoader();
   };
 
   formHandler(e) {
@@ -78,10 +63,48 @@ class Tabs extends Component {
     console.log(data);
   };
 
+  // Delete a user from a database
+
+  deleteUser = (userId) => {
+    console.log(userId);
+    // e.preventDefault();
+    fetch("http://localhost:5000/delete/" + userId, {
+      method: "DELETE",
+      body: JSON.stringify({
+        id: userId,
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => response.json())
+      .then((json) => console.log(json));
+    console.log("deleted user is" + userId);
+    this.dataLoader();
+  };
+
+  // Edit a user from a database
+
+  editUser = (userObj) => {
+    console.log(userObj);
+    console.log(userObj.id);
+    this.setState({ user: userObj });
+    this.setState({ modal: true });
+  };
+
+  closeModal = () => {
+    this.setState({ modal: false });
+  };
+
   render() {
     return (
       <div className="App">
         <div className="app-container">
+          <Modal
+            modal={this.state.modal}
+            closeModal={this.closeModal}
+            children={this.state.user}
+          />
           <div className="tabs-row">
             <button
               className={this.state.toggle === 1 ? "tabs active-tabs" : "tabs"}
@@ -178,7 +201,7 @@ class Tabs extends Component {
                               {item.city}{" "}
                             </div>
                             <div className="icons-bar">
-                              <FaEdit />{" "}
+                              <FaEdit onClick={() => this.editUser(item)} />{" "}
                               <AiFillDelete
                                 onClick={() => {
                                   this.deleteUser(item.id);
