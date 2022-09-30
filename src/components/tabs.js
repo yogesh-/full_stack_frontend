@@ -60,13 +60,12 @@ class Tabs extends Component {
     let response = await fetch("http://localhost:5000/read_db");
     let data = await response.json();
     this.setState({ apiResponse: data });
-    console.log(data);
   };
 
   // Delete a user from a database
 
   deleteUser = (userId) => {
-    console.log(userId);
+    // console.log(userId);
     // e.preventDefault();
     fetch("http://localhost:5000/delete/" + userId, {
       method: "DELETE",
@@ -104,6 +103,7 @@ class Tabs extends Component {
             modal={this.state.modal}
             closeModal={this.closeModal}
             children={this.state.user}
+            reload={this.dataLoader}
           />
           <div className="tabs-row">
             <button

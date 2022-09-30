@@ -5,15 +5,34 @@ class Modal extends Component {
     super(props);
     this.props = props;
     this.state = {
-      efname: "",
-      eage: "",
-      ecity: "",
-      ecountry: "",
+      fname: "",
+      age: "",
+      city: "",
+      country: "",
     };
   }
 
   editOnChange = (e) => {
-    this.setState({ ...this.state, [e.target.name]: e.target.value });
+    console.log(this.state);
+    this.setState({ ...this.props.children, [e.target.name]: e.target.value });
+  };
+
+  updateUser = (user) => {
+    fetch("http://localhost:5000/update_user/" + user.id, {
+      method: "PUT",
+      body: JSON.stringify({
+        fname: this.state.fname,
+        age: this.state.age,
+        city: this.state.city,
+        country: this.state.country,
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    })
+      .then((response) => response.json())
+      .then((json) => console.log(json));
+    this.props.closeModal();
   };
 
   render() {
@@ -24,56 +43,49 @@ class Modal extends Component {
         }
       >
         <section className="modal-main">
-          {/* <h4 key={this.props.children.id}>{this.props.children.fname}</h4>
-          <h4>{this.props.children.city}</h4>
-          <h4>{this.props.children.age}</h4> */}
-
-          {/* <form onSubmit={(e) => this.formHandler(e)}> */}
           <form>
-            {/* <form action="http://localhost:5000/formPost/" method="post"> */}
             <input
               type="text"
               placeholder="Name"
               name="fname"
-              value={this.props.children.fname}
+              defaultValue={this.props.children.fname}
               onChange={(e) => this.editOnChange(e)}
             />
             <input
               type="number"
               placeholder="Age"
               name="age"
-              value={this.props.children.age}
+              defaultValue={this.props.children.age}
               onChange={(e) => this.editOnChange(e)}
             />
             <input
               type="text"
               placeholder="City"
               name="city"
-              value={this.props.children.city}
+              defaultValue={this.props.children.city}
               onChange={(e) => this.editOnChange(e)}
             />
             <input
               type="text"
               placeholder="Country"
               name="country"
-              value={this.props.children.country}
+              defaultValue={this.props.children.country}
               onChange={(e) => this.editOnChange(e)}
             />
+            <button
+              type="button"
+              style={{ backgroundColor: "green", color: "white" }}
+              onClick={() => this.updateUser(this.props.children)}
+            >
+              Save Details
+            </button>
+            <button
+              style={{ backgroundColor: "#FF0000", color: "white" }}
+              onClick={this.props.closeModal}
+            >
+              Cancel
+            </button>
           </form>
-
-          <button
-            type="button"
-            style={{ backgroundColor: "green", color: "white" }}
-            onClick={this.props.closeModal}
-          >
-            Save Details
-          </button>
-          <button
-            style={{ backgroundColor: "#FF0000", color: "white" }}
-            onClick={this.props.closeModal}
-          >
-            Cancel
-          </button>
         </section>
       </div>
     );
